@@ -32,26 +32,27 @@
                                 <h1 class="mt-4">Dashboard</h1>
                                 <ol class="breadcrumb mb-4">
                                     <li class="breadcrumb-item active"><a href="/admin">Dashboard</a></li>
-                                    <li class="breadcrumb-item active">Users</li>
+                                    <li class="breadcrumb-item active">Products</li>
                                 </ol>
                                 <div class="container mt-5">
                                     <div class="row">
                                         <div class="col-12 mx-auto">
                                             <div class="d-flex justify-content-between">
-                                                <h3>User Detail with id = ${id}</h3>
+                                                <h3>Thông tin sản phẩm có id = ${id}</h3>
                                             </div>
                                             <hr>
-                                            <div class="card" style="width: 60%;">
+                                            <div class="card" style="width: 50%;">
+                                                <img src="/images/product/${product.image}" alt="Card image cap" class="card-img-top">
                                                 <div class="card-header">
-                                                    User Infomation
+                                                    Product Infomation
                                                 </div>
                                                 <ul class="list-group list-group-flush">
-                                                    <li class="list-group-item">${user.id}</li>
-                                                    <li class="list-group-item">Email: ${user.email}</li>
-                                                    <li class="list-group-item">Full Name: ${user.fullName}</li>
-                                                    <li class="list-group-item">Role: ${user.role.name}</li>
-                                                    <li class="list-group-item">Address: ${user.address}</li>
-                                                    <li class="list-group-item">Number Phone: ${user.phone}</li>
+                                                    <li class="list-group-item">Id: ${product.id}</li>
+                                                    <li class="list-group-item">Tên sản phẩm: ${product.name}</li>
+                                                    <li class="list-group-item">Giá sản phẩm: ${product.price}</li>
+                                                    <li class="list-group-item">Miêu tả chi tiết: ${product.detailDesc}</li>
+                                                    <li class="list-group-item">Miêu tả ngắn: ${product.shortDesc}</li>
+                                                    <li class="list-group-item">Số lượng: ${product.quantity}</li>
                                                 </ul>
                                             </div>
                                             <a href="/admin/user" class="btn btn-success mt-3">Back</a>
