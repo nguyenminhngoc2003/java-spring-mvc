@@ -51,6 +51,7 @@ public class ProductController {
         for (FieldError error : errors) {
             System.out.println(">>>" + error.getField() + "-" + error.getDefaultMessage());
         }
+
         if (newProductBindingResult.hasErrors()) {
             return "/admin/product/create";
         }
