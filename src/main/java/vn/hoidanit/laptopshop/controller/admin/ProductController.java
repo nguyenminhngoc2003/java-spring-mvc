@@ -1,6 +1,7 @@
 package vn.hoidanit.laptopshop.controller.admin;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,7 +32,7 @@ public class ProductController {
 
     @GetMapping("/admin/product")
     public String getProductPage(Model model) {
-        List<Product> product = this.productService.getAllProducts();
+        List<Product> product = this.productService.fetchProducts();
         model.addAttribute("product", product);
         return "admin/product/show";
     }
@@ -44,7 +45,7 @@ public class ProductController {
 
     @PostMapping("/admin/product/create")
     public String CreateUserPage(Model model,
-            @ModelAttribute("newProduct") @Valid Product jv_product,
+            @ModelAttribute("newProduct") @Valid Product pr,
             BindingResult newProductBindingResult,
             @RequestParam("productFile") MultipartFile file) {
         List<FieldError> errors = newProductBindingResult.getFieldErrors();
@@ -57,14 +58,14 @@ public class ProductController {
         }
 
         String image = this.uploadService.handleSaveUploadFile(file, "product");
-        jv_product.setImage(image);
-        this.productService.handleSaveProduct(jv_product);
+        pr.setImage(image);
+        this.productService.createProduct(pr);
         return "redirect:/admin/product";
     }
 
     @GetMapping("/admin/product/{id}")
     public String getDetailProductPage(Model model, @PathVariable long id) {
-        Product products = this.productService.getProductById(id);
+        Optional<Product> products = this.productService.fetchProductById(id);
         model.addAttribute("product", products);
         model.addAttribute("id", id);
         return "admin/product/detail";
@@ -73,34 +74,40 @@ public class ProductController {
     // UPDATE PRODUCT
     @GetMapping("/admin/product/update/{id}")
     public String getProductUpdatePage(Model model, @PathVariable long id) {
-        Product currentProduct = this.productService.getProductById(id);
+        Optional<Product> currentProduct = this.productService.fetchProductById(id);
         model.addAttribute("newProduct", currentProduct);
         return "admin/product/update";
     }
 
     @PostMapping("/admin/product/update")
-    public String productUpdatePage(@ModelAttribute("newProduct") @Valid Product jv_product,
+    public String handleUpdateProduct(@ModelAttribute("newProduct") @Valid Product pr,
             BindingResult newProductBindingResult,
-            @RequestParam("productFile") MultipartFile file) {
+            @RequestParam("hoidanitFile") MultipartFile file) {
+
+        // validate
         if (newProductBindingResult.hasErrors()) {
             return "admin/product/update";
         }
-        Product currentProduct = this.productService.getProductById(jv_product.getId());
+
+        Product currentProduct = this.productService.fetchProductById(pr.getId()).get();
         if (currentProduct != null) {
+            // update new image
             if (!file.isEmpty()) {
                 String img = this.uploadService.handleSaveUploadFile(file, "product");
                 currentProduct.setImage(img);
             }
-            currentProduct.setName(jv_product.getName());
-            currentProduct.setPrice(jv_product.getPrice());
-            currentProduct.setQuantity(jv_product.getQuantity());
-            currentProduct.setDetailDesc(jv_product.getDetailDesc());
-            currentProduct.setShortDesc(jv_product.getShortDesc());
-            currentProduct.setFactory(jv_product.getFactory());
-            currentProduct.setTarget(jv_product.getTarget());
 
-            this.productService.handleSaveProduct(currentProduct);
+            currentProduct.setName(pr.getName());
+            currentProduct.setPrice(pr.getPrice());
+            currentProduct.setQuantity(pr.getQuantity());
+            currentProduct.setDetailDesc(pr.getDetailDesc());
+            currentProduct.setShortDesc(pr.getShortDesc());
+            currentProduct.setFactory(pr.getFactory());
+            currentProduct.setTarget(pr.getTarget());
+
+            this.productService.createProduct(currentProduct);
         }
+
         return "redirect:/admin/product";
     }
 
@@ -113,7 +120,7 @@ public class ProductController {
 
     @PostMapping("/admin/product/delete")
     public String PostDeleteProduct(Model model, @ModelAttribute("newProduct") Product jv_product) {
-        this.productService.deleteAllUser(jv_product.getId());
+        this.productService.deleteProduct(jv_product.getId());
         return "redirect:/admin/product";
     }
 }
